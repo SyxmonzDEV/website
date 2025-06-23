@@ -5,16 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blacklist Minecraft</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class'
+      }
+    </script>
   </head>
-  <body class="bg-gray-900 text-white font-sans">
+  <body class="bg-gray-900 text-white font-sans transition-colors duration-500" id="body">
     <!-- Navbar -->
-    <nav class="bg-gray-800 p-4 shadow-lg">
+    <nav class="bg-green-700 p-4 shadow-lg">
       <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-green-400">Blacklist Minecraft</h1>
-        <ul class="flex space-x-6">
-          <li><a href="#home" class="hover:text-green-400">Home</a></li>
-          <li><a href="#join" class="hover:text-green-400">Join</a></li>
-          <li><a href="#staff" class="hover:text-green-400">Staff</a></li>
+        <h1 class="text-2xl font-bold text-green-200">Blacklist Minecraft</h1>
+        <ul class="flex space-x-6 items-center">
+          <li><a href="index.html" class="hover:text-green-200">Home</a></li>
+          <li><a href="rules.html" class="hover:text-green-200">Rules</a></li>
+          <li><a href="appeal.html" class="hover:text-green-200">Appeal</a></li>
+          <li>
+            <button onclick="toggleTheme()" class="ml-4 p-2 bg-green-600 rounded hover:bg-green-500">Toggle Theme</button>
+          </li>
         </ul>
       </div>
     </nav>
@@ -30,9 +38,10 @@
     <!-- Join Section -->
     <section id="join" class="py-20 bg-gray-800 text-center">
       <h2 class="text-3xl font-semibold mb-4">Join Our Server</h2>
-      <p class="text-lg mb-2">🎮 IP Address: <span class="text-green-400 font-mono">play.blacklistminecraft.online</span></p>
-      <p class="text-lg">🌐 Version: <span class="text-green-400">1.20+</span></p>
-      <p class="text-lg">💻 Status: <span class="text-yellow-400">Online</span></p>
+      <p class="text-lg mb-2">🎮 IP Address: <span class="text-green-400 font-mono">mark-move.gl.joinmc.link</span></p>
+      <p class="text-lg">🌐 Version: <span class="text-green-400">1.21.4</span></p>
+      <p class="text-lg">💻 Status: <span id="server-status" class="text-yellow-400">Checking server status...</span></p>
+      <p class="text-lg">👥 Players: <span id="player-count" class="text-green-400 animate-pulse">Loading...</span></p>
     </section>
 
     <!-- Staff Section -->
@@ -40,16 +49,14 @@
       <h2 class="text-3xl font-semibold mb-6">Meet the Staff</h2>
       <div class="flex flex-wrap justify-center gap-6 px-4">
         <div class="bg-gray-800 p-6 rounded-xl shadow-xl w-60">
+          <img src="images/syxmonz.png" alt="Syxmonz Avatar" class="rounded-full mx-auto mb-4 w-24 h-24 object-cover" />
           <h3 class="text-xl font-bold text-green-300">Syxmonz</h3>
-          <p class="text-sm text-gray-300">Founder / Developer</p>
+          <p class="text-sm text-gray-300">Owner</p>
         </div>
         <div class="bg-gray-800 p-6 rounded-xl shadow-xl w-60">
-          <h3 class="text-xl font-bold text-green-300">StaffName</h3>
-          <p class="text-sm text-gray-300">Administrator</p>
-        </div>
-        <div class="bg-gray-800 p-6 rounded-xl shadow-xl w-60">
-          <h3 class="text-xl font-bold text-green-300">AnotherStaff</h3>
-          <p class="text-sm text-gray-300">Moderator</p>
+          <img src="images/timo.png" alt="Timo Avatar" class="rounded-full mx-auto mb-4 w-24 h-24 object-cover" />
+          <h3 class="text-xl font-bold text-green-300">Timo</h3>
+          <p class="text-sm text-gray-300">Server Manager</p>
         </div>
       </div>
     </section>
@@ -61,5 +68,42 @@
         <a href="https://discord.gg/yourinvite" class="text-green-400 hover:underline">Join our Discord</a>
       </p>
     </footer>
+
+    <!-- Theme Toggle Script -->
+    <script>
+      function toggleTheme() {
+        document.documentElement.classList.toggle('dark');
+        document.getElementById('body').classList.toggle('bg-white');
+        document.getElementById('body').classList.toggle('text-black');
+      }
+    </script>
+
+    <!-- Server Status Script -->
+    <script>
+      async function checkServerStatus() {
+        try {
+          const response = await fetch("https://api.mcstatus.io/v2/status/java/mark-move.gl.joinmc.link");
+          const data = await response.json();
+          const statusEl = document.getElementById("server-status");
+          const playerCountEl = document.getElementById("player-count");
+
+          if (data.online) {
+            statusEl.textContent = "Online";
+            statusEl.classList.replace("text-yellow-400", "text-green-400");
+            playerCountEl.textContent = `${data.players.online} / ${data.players.max}`;
+          } else {
+            statusEl.textContent = "Offline";
+            statusEl.classList.replace("text-yellow-400", "text-red-400");
+            playerCountEl.textContent = "N/A";
+          }
+        } catch (error) {
+          document.getElementById("server-status").textContent = "Error";
+          document.getElementById("player-count").textContent = "N/A";
+        }
+      }
+
+      checkServerStatus();
+      setInterval(checkServerStatus, 60000);
+    </script>
   </body>
 </html>
